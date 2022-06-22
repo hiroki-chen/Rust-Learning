@@ -36,9 +36,9 @@ impl Log for Bar {}
 
 /// This function is defined with where clause.
 pub fn do_something_version_a<T, U>(object: &T, target: &U)
-where
-  T: Log,
-  U: DiskIO,
+  where
+    T: Log,
+    U: DiskIO,
 {
   // Do nothing!
 }
@@ -57,8 +57,8 @@ pub fn do_something_version_d(object: &mut impl Log) -> &mut impl Log {
 }
 
 pub fn find_largest<T>(items: &Vec<T>) -> &T
-where
-  T: PartialOrd,
+  where
+    T: PartialOrd,
 {
   let mut max = &items[0];
 
@@ -103,15 +103,37 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
   }
 }
 
+pub struct Excerpt<'a> {
+  content: &'a str,
+}
+fn display<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a str where T: Display {
+  println!("Announcement: {}", ann);
+
+  if x.len() > y.len() {
+    x
+  } else {
+    y
+  }
+}
+
 pub fn main() {
   println!(
     "{}",
     Foo {
       content: String::from("OK")
     }
-    .print_log(true)
+      .print_log(true)
   );
 
-  let num = 3;
-  let s = num.to_string();
+  let mut my_dict: std::collections::HashMap<i32, i32> = std::collections::HashMap::new();
+  my_dict.entry(32).or_insert(100);
+
+  let novel: &str = "Give me that thing I need. Call me by your name!";
+  let a = novel.split('.').next().expect("Cannot find any dot");
+
+  let excerpt = Excerpt {
+    content: a,
+  };
+
+  println!("{}", excerpt.content);
 }
