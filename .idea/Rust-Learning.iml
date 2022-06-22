@@ -5,8 +5,10 @@
       <sourceFolder url="file://$MODULE_DIR$/Tests/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Tests/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Trait/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grep/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/Trait/target" />
       <excludeFolder url="file://$MODULE_DIR$/Tests/target" />
+      <excludeFolder url="file://$MODULE_DIR$/grep/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
