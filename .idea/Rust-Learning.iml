@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Tests/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/Trait/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/grep/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grep/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/Trait/target" />
       <excludeFolder url="file://$MODULE_DIR$/Tests/target" />
       <excludeFolder url="file://$MODULE_DIR$/grep/target" />
