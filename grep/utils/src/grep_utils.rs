@@ -58,10 +58,10 @@ pub fn parse_command_line() -> Result<collections::HashMap<String, Option<String
 ///   use utils::grep_utils::colorized_log;
 ///
 ///   let mut stderr = StandardStream::stdout(ColorChoice::Always);
-///   colorized_log(None, &mut stderr, &("Hello world!".to_string())).ok();
+///   colorized_log(&Some(Color::Red), &mut stderr, &("Hello world!".to_string())).ok();
 /// ```
 /// The function will return an error if there is something wrong in print.
-pub fn colorized_log(color: Option<Color>, dest: &mut StandardStream, text: &String)
+pub fn colorized_log(color: &Option<Color>, dest: &mut StandardStream, text: &String)
                      -> Result<(), Box<dyn Error>>
 {
   dest.set_color(ColorSpec::new().set_fg(Some(color.unwrap_or(Color::Yellow))))?;
