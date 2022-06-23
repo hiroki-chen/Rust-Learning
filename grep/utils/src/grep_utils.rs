@@ -9,21 +9,24 @@ use regex::Regex;
 use termcolor::{Color, ColorSpec, StandardStream, WriteColor, ColorChoice};
 
 pub fn run<'a>() -> Result<(), Box<dyn Error>>{
-  let args = parse_command_line().expect("Parse error!");
+  let args = parse_command_line()?;
   let filename =
     args.get("filename")
       .expect("Please specify the filename by --filename=[name]")
-      .as_ref()
-      .expect("Filename is empty!");
+      .as_ref().unwrap();
 
   let query = match args.get("query") {
     Some(val) => val.as_ref().unwrap().clone(),
-    None => String::from(""),
+    None => {
+      println!("No query specified, will use \"\"");
+      String::from("")
+    },
   };
 
-  let mut stderr = StandardStream::stderr(ColorChoice::Always);
-  dbg!(colorized_log(&Some(Color::Cyan), &mut stderr, &format!("The filename given is {}.", filename))?);
-  println!("{:?}", search_file(&read_file(&filename)?, &query));
+  let mut stderr = StandardStream::stderr(ColorChoice::Auto);
+  dbg!(colorized_log(&Some(Color::Cyan), &mut stderr,
+                     &format!("The filename given is {}.", filename))?);
+  println!("{:?}", search_file(&read_file(filename)?, &query));
 
   Ok(())
 }
