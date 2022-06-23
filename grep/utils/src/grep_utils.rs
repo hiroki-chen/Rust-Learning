@@ -1,14 +1,15 @@
 use std::env;
-use std::string;
 use std::collections;
 use std::error::Error;
 use std::fs;
 use std::io::Write;
+use std::str::FromStr;
 
-use termcolor::{Color, ColorSpec, StandardStream, WriteColor};
+use regex::Regex;
+use termcolor::{Color, ColorSpec, StandardStream, WriteColor, ColorChoice};
 
 /// Converts the string slice into String type and also truncates the dash.
-fn truncate_string(key: &str) -> Result<String, string::ParseError> {
+pub fn truncate_string(key: &str) -> Result<String, Box<dyn Error>> {
   let mut index: usize = 0;
 
   for ch in key.chars() {
@@ -19,25 +20,32 @@ fn truncate_string(key: &str) -> Result<String, string::ParseError> {
     }
   }
 
-  Ok(key.chars().skip(index).take(key.len() - index).collect())
+  if index >= key.len() {
+    Err("The key is empty".into())
+  } else {
+    Ok(key.chars().skip(index).take(key.len() - index).collect::<String>())
+  }
 }
 
 /// Reads from the command line and returns a hash map containing the keyword-value pairs, indicating
 /// specific values for a given option.
-pub fn parse_command_line() -> Result<collections::HashMap<String, Option<String>>, string::ParseError> {
+pub fn parse_command_line() -> Result<collections::HashMap<String, Option<String>>, Box<dyn Error>> {
   let args = env::args().collect::<Vec<String>>();
 
   let mut ans: collections::HashMap<String, Option<String>> = collections::HashMap::new();
   for arg in args.into_iter() {
-    let key_value: Vec<&str> = arg.split('=').collect();
+    let key_value: Vec<&str> = arg.split('=').collect::<Vec<&str>>();
 
     let value: Option<String> =
       if key_value.len() < 2 { None } else { Some(key_value[1].to_string()) };
 
     // Insert the key value pair into the hash map.
-    ans.entry(truncate_string(key_value[0])
-      .expect("Must be a valid argument!"))
-      .or_insert(value);
+    match truncate_string(key_value[0]) {
+      Ok(truncated_string) => {
+        ans.entry(truncated_string).or_insert(value);
+      }
+      Err(e) => return Err(e),
+    }
   }
 
   Ok(ans)
@@ -46,8 +54,11 @@ pub fn parse_command_line() -> Result<collections::HashMap<String, Option<String
 /// Prints the colorized text to the standard output stream specified by the user.
 /// # Examples
 /// ```
+///   use termcolor::*;
+///   use utils::grep_utils::colorized_log;
+///
 ///   let mut stderr = StandardStream::stdout(ColorChoice::Always);
-///   colorized_log(None, &mut stdout, &("Hello world!".to_string()))?;
+///   colorized_log(None, &mut stderr, &("Hello world!".to_string())).ok();
 /// ```
 /// The function will return an error if there is something wrong in print.
 pub fn colorized_log(color: Option<Color>, dest: &mut StandardStream, text: &String)
@@ -71,4 +82,28 @@ pub fn read_file(filename: &String) -> Result<Vec<String>, Box<dyn Error>> {
 
   // ans.
   Ok(ans)
+}
+
+/// Searches the whole file for the given query string.
+/// If the environment variable `CASE_SENSITIVE` is set to false, we will
+/// return the whole string into lowercase.
+pub fn search_file<'a>(lines: &'a Vec<String>, query: &'a String) -> Vec<&'a String> {
+// By default, we want case_sensitive.
+  let case_sensitive =
+    bool::from_str(env::var("CASE_SENSITIVE")
+      .unwrap_or("".to_string()).as_str())
+      .unwrap_or(false);
+  let query_changed = if case_sensitive { query.clone() } else { query.to_lowercase() };
+  // Create a regular expression target.
+  let pat = Regex::new(query_changed.as_str()).unwrap();
+
+  let mut ans: Vec<&'a String> = Vec::new();
+  for line in lines {
+    let line_changed = if case_sensitive { line.clone() } else { line.to_lowercase() };
+    if let Some(_) = pat.find(line_changed.as_str()) {
+      ans.push(line);
+    }
+  }
+
+  ans
 }
