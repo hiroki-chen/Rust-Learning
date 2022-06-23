@@ -8,6 +8,26 @@ use std::str::FromStr;
 use regex::Regex;
 use termcolor::{Color, ColorSpec, StandardStream, WriteColor, ColorChoice};
 
+pub fn run<'a>() -> Result<(), Box<dyn Error>>{
+  let args = parse_command_line().expect("Parse error!");
+  let filename =
+    args.get("filename")
+      .expect("Please specify the filename by --filename=[name]")
+      .as_ref()
+      .expect("Filename is empty!");
+
+  let query = match args.get("query") {
+    Some(val) => val.as_ref().unwrap().clone(),
+    None => String::from(""),
+  };
+
+  let mut stderr = StandardStream::stderr(ColorChoice::Always);
+  dbg!(colorized_log(&Some(Color::Cyan), &mut stderr, &format!("The filename given is {}.", filename))?);
+  println!("{:?}", search_file(&read_file(&filename)?, &query));
+
+  Ok(())
+}
+
 /// Converts the string slice into String type and also truncates the dash.
 pub fn truncate_string(key: &str) -> Result<String, Box<dyn Error>> {
   let mut index: usize = 0;
@@ -53,10 +73,8 @@ pub fn parse_command_line() -> Result<collections::HashMap<String, Option<String
 
 /// Prints the colorized text to the standard output stream specified by the user.
 /// # Examples
-/// ```
-///   use termcolor::*;
-///   use utils::grep_utils::colorized_log;
-///
+/// ```rust, ignore
+///   // Get the handle to the stderr.
 ///   let mut stderr = StandardStream::stdout(ColorChoice::Always);
 ///   colorized_log(&Some(Color::Red), &mut stderr, &("Hello world!".to_string())).ok();
 /// ```
@@ -74,7 +92,7 @@ pub fn colorized_log(color: &Option<Color>, dest: &mut StandardStream, text: &St
 pub fn read_file(filename: &String) -> Result<Vec<String>, Box<dyn Error>> {
   let contents = fs::read_to_string(filename)?;
 
-  println!("{:?}", contents);
+  dbg!(&contents);
   let mut ans: Vec<String> = Vec::new();
   contents.split('\n').collect::<Vec<&str>>().iter().for_each(|x| {
     ans.push(x.to_string());
@@ -92,7 +110,7 @@ pub fn search_file<'a>(lines: &'a Vec<String>, query: &'a String) -> Vec<&'a Str
   let case_sensitive =
     bool::from_str(env::var("CASE_SENSITIVE")
       .unwrap_or("".to_string()).as_str())
-      .unwrap_or(false);
+      .unwrap_or(true);
   let query_changed = if case_sensitive { query.clone() } else { query.to_lowercase() };
   // Create a regular expression target.
   let pat = Regex::new(query_changed.as_str()).unwrap();
