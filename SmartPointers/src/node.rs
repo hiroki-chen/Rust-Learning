@@ -1,12 +1,65 @@
+use std::cell::RefCell;
 use std::error::Error;
 use std::fmt::Display;
 use std::ops::Deref;
 use std::rc::Rc;
 
+// Definition for singly-linked list.
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+  pub val: i32,
+  pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+  #[inline]
+  fn new(val: i32) -> Self {
+    ListNode {
+      next: None,
+      val,
+    }
+  }
+}
+
+pub fn remove_nth_in_reverse(head: Option<Box<ListNode>>, n: i32) -> Option<Box<ListNode>> {
+  if head.is_none() {
+    return None;
+  }
+
+  let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
+  let mut slow = &mut dummy;
+  let mut fast = &slow.clone();
+
+  for _ in 0..=n {
+    if let Some(next) = fast {
+      fast = &next.next
+    } else {
+      return None;
+    }
+  }
+
+  while fast.is_some() {
+    fast = &fast.as_ref().unwrap().next;
+    slow = &mut slow.as_mut().unwrap().next;
+  }
+
+  let should_remove = &mut slow.as_mut().unwrap().next;
+  slow.as_mut().unwrap().next = should_remove.as_mut().unwrap().next.take();
+
+  dummy.unwrap().next
+}
+
+
 #[derive(Debug)]
 pub struct MyBox<T>
   where T: Display {
   val: T,
+}
+
+#[derive(Debug)]
+pub struct MockMessenger {
+  pub sent_messages: RefCell<Vec<String>>,
+  pub immutable: Vec<String>,
 }
 
 impl<T> MyBox<T>

@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 mod node;
 
 // A pointer is a general concept for a variable that contains an address in memory.
@@ -29,5 +31,19 @@ fn main() {
   assert_eq!(123, *my_box);
   drop(my_box);
 
-  // Reference count.
+  let messenger = node::MockMessenger {
+    sent_messages: RefCell::new(Vec::new()),
+    immutable: Vec::new(),
+  };
+
+  // Although messenger is itself immutable, we can mutate its field
+  // sent_messages because it is a RefCell type.
+  messenger.sent_messages.borrow_mut().push(String::from("Message"));
+  // messenger.immutable.push(String::from("Can you?")); won't compile here.
+  assert_eq!(1, messenger.sent_messages.borrow().len());
+
+  let x = 5;
+  let y = RefCell::new(x);
+  *(y.borrow_mut()) = 4;
+  println!("{}", y.borrow());
 }
