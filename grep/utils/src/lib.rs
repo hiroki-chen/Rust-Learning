@@ -1,3 +1,5 @@
+extern crate core;
+
 pub mod grep_utils;
 
 #[cfg(test)]

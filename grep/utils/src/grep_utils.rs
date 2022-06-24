@@ -8,7 +8,7 @@ use std::str::FromStr;
 use regex::Regex;
 use termcolor::{Color, ColorSpec, StandardStream, WriteColor, ColorChoice};
 
-pub fn run<'a>() -> Result<(), Box<dyn Error>>{
+pub fn run() -> Result<(), Box<dyn Error>> {
   let args = parse_command_line()?;
   let filename =
     args.get("filename")
@@ -20,7 +20,7 @@ pub fn run<'a>() -> Result<(), Box<dyn Error>>{
     None => {
       println!("No query specified, will use \"\"");
       String::from("")
-    },
+    }
   };
 
   let mut stderr = StandardStream::stderr(ColorChoice::Auto);
@@ -97,9 +97,12 @@ pub fn read_file(filename: &String) -> Result<Vec<String>, Box<dyn Error>> {
 
   dbg!(&contents);
   let mut ans: Vec<String> = Vec::new();
-  contents.split('\n').collect::<Vec<&str>>().iter().for_each(|x| {
-    ans.push(x.to_string());
-  });
+  contents.split('\n')
+    .collect::<Vec<&str>>()
+    .iter()
+    .for_each(|x| {
+      ans.push(x.to_string());
+    });
 
   // ans.
   Ok(ans)
@@ -116,15 +119,14 @@ pub fn search_file<'a>(lines: &'a Vec<String>, query: &'a String) -> Vec<&'a Str
       .unwrap_or(true);
   let query_changed = if case_sensitive { query.clone() } else { query.to_lowercase() };
   // Create a regular expression target.
-  let pat = Regex::new(query_changed.as_str()).unwrap();
+  let pat = Regex::new(query_changed.as_str())
+    .unwrap_or_else(|e| panic!("{}", e));
 
-  let mut ans: Vec<&'a String> = Vec::new();
-  for line in lines {
-    let line_changed = if case_sensitive { line.clone() } else { line.to_lowercase() };
-    if let Some(_) = pat.find(line_changed.as_str()) {
-      ans.push(line);
-    }
-  }
+  lines.into_iter()
+    .filter(|line| {
+      let lowercase = line.to_lowercase();
+      let line_str = if case_sensitive { line.as_str() } else { lowercase.as_str() };
 
-  ans
+      pat.find(line_str).is_some()
+    }).collect()
 }
