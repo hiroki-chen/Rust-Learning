@@ -13,9 +13,9 @@ pub struct ListNode {
 
 impl ListNode {
   #[inline]
-  fn new(val: i32) -> Self {
+  pub(crate) fn new(val: i32, next: Option<Box<ListNode>>) -> Self {
     ListNode {
-      next: None,
+      next,
       val,
     }
   }

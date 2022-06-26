@@ -1,4 +1,8 @@
+use std::borrow::{Borrow, BorrowMut};
 use std::cell::RefCell;
+use std::ops::Deref;
+use std::rc::Rc;
+use crate::node::ListNode;
 
 mod node;
 
@@ -42,8 +46,23 @@ fn main() {
   // messenger.immutable.push(String::from("Can you?")); won't compile here.
   assert_eq!(1, messenger.sent_messages.borrow().len());
 
+  // RefCell can borrow the object as mutable even if it is not declared as mutable.
   let x = 5;
   let y = RefCell::new(x);
   *(y.borrow_mut()) = 4;
   println!("{}", y.borrow());
+
+  let mut a = Rc::new(ListNode::new(1, None));
+  println!("a initial rc count = {}", Rc::strong_count(&a));
+  println!("a next item = {:?}", a.next);
+
+  let b = Rc::clone(&a);
+  println!("a rc count after b creation = {}", Rc::strong_count(&a));
+  println!("b initial rc count = {}", Rc::strong_count(&b));
+  println!("b next item = {:?}", b.next);
+
+  let new_node: Option<Box<ListNode>> = Some(Box::new(ListNode::new(123, None)));
+  let head: Option<Box<ListNode>> = Some(Box::new(ListNode::new(0, new_node)));
+
+  println!("{:?}", head);
 }
