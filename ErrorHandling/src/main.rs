@@ -6,16 +6,16 @@ mod file_handler;
 
 fn main() {
   println!(
-    "Your current direcotry is: {}",
+    "Your current directory is: {}",
     env::current_dir().unwrap().display()
   );
-  let mut f = match File::open("./data/input.txt") {
+  let f = match File::open("./data/input.txt") {
     Ok(file) => file,
     Err(error) => panic!("{:?}", error),
   };
 
   // Code snippet from previous.
-  let mut f = match File::open("./data/input.txt") {
+  let f = match File::open("./data/input.txt") {
     Ok(file) => file,
     Err(error) => match error.kind() {
       ErrorKind::NotFound => match File::create("./data/input.txt") {
@@ -39,19 +39,20 @@ use std::io;
 use std::cmp;
 
 
-fn foo<T>(items: &Vec<T>) -> Result<T, io::Error> {
+fn foo<'a, T>(items: &'a Vec<T>) -> Result<&'a T, Box<dyn std::error::Error>>
+  where T: PartialOrd {
   let len: usize = items.len();
   // Check if empty.
   if len == 0 {
-    panic!("Error");
+    return Err("Vector cannot be empty!".into());
   }
-	
-	let mut maximum: T = items[0];
-	for item in items {
-		if maximum < item {
 
+  let mut maximum = &items[0];
+  for item in items {
+    if maximum < item {
+      maximum = item;
     }
-	}
+  }
 
-	Ok(maximum)
+  Ok(maximum)
 }
