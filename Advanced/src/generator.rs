@@ -6,8 +6,11 @@ use std::fmt;
 use std::fmt::Formatter;
 use itertools::{concat, Itertools};
 
-const SPLIT_POINT_FOUR: usize = 56;
-const SPLIT_POINT_THREE: usize = 42;
+const SPLIT_POINT_FOUR: usize = 52;
+const SPLIT_POINT_THREE: usize = 39;
+const WP_POINT_FOUR: usize = 14;
+const WP_POINT_THREE: usize = 18;
+const NUM_PLAYER_HAI: usize = 13;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub enum Hai {
@@ -74,7 +77,7 @@ pub fn generate(is_four_player: bool) -> (Vec<Hai>, Vec<Vec<Hai>>) {
   let mut players: Vec<Vec<Hai>> = player_hai
     .to_vec()
     .into_iter()
-    .chunks(14)
+    .chunks(NUM_PLAYER_HAI)
     .into_iter()
     .map(|x| x.collect())
     .collect();
@@ -82,7 +85,16 @@ pub fn generate(is_four_player: bool) -> (Vec<Hai>, Vec<Vec<Hai>>) {
   // Finally, sort the tiles in hands.
   players.iter_mut().for_each(|x| x.sort());
 
-  println!("Tile mountain: {}\n Player:\n{}", InHand(&tiles.to_vec()), AllHand(&players));
+  // Split the 王牌 and normal tile mountain.
+  let (tile_mountain, wp) = tiles.split_at(tiles.len() -
+    if is_four_player {
+      WP_POINT_FOUR
+    } else {
+      WP_POINT_THREE
+    }
+  );
+
+  println!("Tile mountain:\n{} {}\nPlayer:\n{}", InHand(&tile_mountain.to_vec()), InHand(&wp.to_vec()), AllHand(&players));
 
   (tiles.to_vec(), players)
 }
