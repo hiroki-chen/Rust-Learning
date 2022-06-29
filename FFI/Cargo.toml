@@ -13,4 +13,4 @@ crate-type = ["dylib"]
 [dependencies]
 
 [build-dependencies]
-cc = "*"
+cc = { version = "*", feature = ["parallel"] }
