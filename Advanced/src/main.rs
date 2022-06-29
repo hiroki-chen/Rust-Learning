@@ -1,4 +1,4 @@
-use std::borrow::Borrow;
+use std::borrow::BorrowMut;
 use std::ops::Add;
 use std::fmt;
 use std::sync;
@@ -76,10 +76,12 @@ fn main() {
   let point = Point { x: 12, y: 34 };
   point.print();
 
+  let m = sync::Arc::new(sync::Mutex::new(String::from("Hello!")));
   let content = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   let (tx, rx) = sync::mpsc::channel();
 
   // Let us create a thread.
+  let mutex = sync::Arc::clone(&m);
   let t = thread::spawn(move || {
     for i in 0..10 {
       println!("{:?}: num = {}", thread::current().id(), &content[i]);
@@ -87,6 +89,9 @@ fn main() {
     }
 
     tx.send(format!("Hello! I am {:?}", thread::current().id())).unwrap();
+
+    let mut s = mutex.lock().unwrap();
+    s.push_str(" Mark!");
   });
 
   for i in 1..=5 {
@@ -98,5 +103,8 @@ fn main() {
 
   t.join().unwrap_or_else(|e| panic!("Error: {:?}", e));
 
-  generator::generate(false);
+  let mutex = sync::Arc::clone(&m);
+  let s = mutex.lock().unwrap();
+  println!("{}", *s);
+  generator::generate(true);
 }
