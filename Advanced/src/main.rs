@@ -5,6 +5,8 @@ use std::sync;
 use std::thread;
 use std::time::Duration;
 
+mod generator;
+
 static mut COUNTER: u32 = 0;
 
 // Unsafe static mutable thing...
@@ -95,4 +97,6 @@ fn main() {
   println!("Got {}", rx.recv().unwrap());
 
   t.join().unwrap_or_else(|e| panic!("Error: {:?}", e));
+
+  generator::generate(false);
 }
