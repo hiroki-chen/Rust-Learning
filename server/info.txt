@@ -1,0 +1,34 @@
+MIRAI_FLAGS='--diag=verify' MIRAI_LOG='warn' cargo mirai 2> info.txt
+    Checking server v0.1.0 (/Users/chenhaobin/Rust-Learning/server)
+warning: unused import: `std::hash::Hash`
+ --> src/thread_pool.rs:1:5
+  |
+1 | use std::hash::Hash;
+  |     ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: associated function is never used: `add_broken_invariant`
+  --> src/shopping_cart.rs:79:10
+   |
+79 |   pub fn add_broken_invariant(&mut self, item: Item) {
+   |          ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: associated function is never used: `checkout`
+  --> src/shopping_cart.rs:84:10
+   |
+84 |   pub fn checkout(&mut self) -> u64 {
+   |          ^^^^^^^^
+
+[2022-07-18T06:27:20Z WARN  mirai::fixed_point_visitor] Fixed point loop iterations 10 exceeded limit of 10 at src/thread_pool.rs:65:5: 71:6 (#389) in function server.thread_pool.implement_server_thread_pool_ThreadPool.drop.
+[2022-07-18T06:27:22Z WARN  mirai::fixed_point_visitor] Fixed point loop iterations 10 exceeded limit of 10 at src/thread_pool.rs:65:5: 71:6 (#389) in function server.thread_pool.implement_server_thread_pool_ThreadPool.drop.
+warning: the called function did not resolve to an implementation with a MIR body
+  --> src/handler.rs:31:5
+   |
+31 |     stream.flush()?;
+   |     ^^^^^^^^^^^^^^
+
+warning: `server` (bin "server") generated 4 warnings
+    Finished dev [unoptimized + debuginfo] target(s) in 15.64s
