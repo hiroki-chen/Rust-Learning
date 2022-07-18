@@ -15,7 +15,6 @@ fn main() {
 
   let mut cart = shopping_cart::ShoppingCart::new();
   // The below causes a diagnostic because pre-condition of Item::new is violated.
-  // todo(wrgr): The diagnostic for the pre-condition is poorly formatted, the MIRAI configuration of the contracts crate
   // probably needs to be modified. The diagnostic can be quite simple because there is a call stack.
   cart.add(shopping_cart::Item::new("free lunch", 0));
   panic!("OH NO!");
@@ -23,29 +22,29 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-  use crate::{Item, ShoppingCart};
+  use crate::shopping_cart;
 
   #[test]
   fn ok() {
-    let mut cart = ShoppingCart::new();
-    cart.add(Item::new("ipad pro", 899));
-    cart.add(Item::new("ipad folio", 169));
+    let mut cart = shopping_cart::ShoppingCart::new();
+    cart.add(shopping_cart::Item::new("ipad pro", 899));
+    cart.add(shopping_cart::Item::new("ipad folio", 169));
     assert_eq!(cart.checkout(), 899 + 169);
   }
 
   // todo: teach MIRAI about should_panic
   #[test]
-  //#[should_panic(expected = "Pre-condition of new violated")]
+  #[should_panic(expected = "Pre-condition of new violated")]
   fn fail_item_new() {
-    //let mut cart = ShoppingCart::new();
+    let mut cart = shopping_cart::ShoppingCart::new();
     // Below violates precondition of Item::new
-    //cart.add(Item::new("free lunch", 0));
+    cart.add(shopping_cart::Item::new("free lunch", 0));
   }
 
   #[test]
-  //#[should_panic(expected = "Invariant of add_broken_invariant violated")]
+  #[should_panic(expected = "Invariant of add_broken_invariant violated")]
   fn fail_add_invariant() {
-    let mut cart = ShoppingCart::new();
-    cart.add_broken_invariant(Item::new("ipad pro", 899));
+    let mut cart = shopping_cart::ShoppingCart::new();
+    cart.add_broken_invariant(shopping_cart::Item::new("ipad pro", 899));
   }
 }

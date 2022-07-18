@@ -1,5 +1,3 @@
-MIRAI_FLAGS='--diag=verify' MIRAI_LOG='warn' cargo mirai 2> info.txt
-    Checking server v0.1.0 (/Users/chenhaobin/Rust-Learning/server)
 warning: unused import: `std::hash::Hash`
  --> src/thread_pool.rs:1:5
   |
@@ -22,13 +20,20 @@ warning: associated function is never used: `checkout`
 84 |   pub fn checkout(&mut self) -> u64 {
    |          ^^^^^^^^
 
-[2022-07-18T06:27:20Z WARN  mirai::fixed_point_visitor] Fixed point loop iterations 10 exceeded limit of 10 at src/thread_pool.rs:65:5: 71:6 (#389) in function server.thread_pool.implement_server_thread_pool_ThreadPool.drop.
-[2022-07-18T06:27:22Z WARN  mirai::fixed_point_visitor] Fixed point loop iterations 10 exceeded limit of 10 at src/thread_pool.rs:65:5: 71:6 (#389) in function server.thread_pool.implement_server_thread_pool_ThreadPool.drop.
-warning: the called function did not resolve to an implementation with a MIR body
-  --> src/handler.rs:31:5
+warning: unsatisfied precondition: "{}", concat!
+         (concat! ("Pre-condition of new violated", ": "), stringify!
+         (! name.is_empty() && price > 0))
+  --> src/main.rs:19:12
    |
-31 |     stream.flush()?;
-   |     ^^^^^^^^^^^^^^
+19 |   cart.add(shopping_cart::Item::new("free lunch", 0));
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: related location
+  --> src/shopping_cart.rs:32:14
+   |
+32 |   #[requires(!name.is_empty() && price > 0)]
+   |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = note: this warning originates in the macro `checked_precondition` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 warning: `server` (bin "server") generated 4 warnings
-    Finished dev [unoptimized + debuginfo] target(s) in 15.64s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.60s
