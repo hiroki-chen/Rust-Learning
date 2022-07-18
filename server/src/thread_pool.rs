@@ -1,9 +1,11 @@
 use std::hash::Hash;
 use std::sync::{Arc, mpsc, Mutex};
 use std::thread;
+use std::fmt;
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
 
+#[derive(Debug)]
 struct Worker {
   id: usize,
   job: Option<thread::JoinHandle<()>>,
@@ -18,6 +20,12 @@ pub struct ThreadPool {
   workers: Vec<Worker>,
   // Sender will automatically dispatch the job to any available worker.
   sender: mpsc::Sender<Message>,
+}
+
+impl fmt::Display for Worker {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "Thread #{}, Job type is {:?}", self.id, self.job)
+  }
 }
 
 impl Worker {
@@ -55,7 +63,7 @@ impl Drop for ThreadPool {
     }
 
     for worker in self.workers.iter_mut() {
-      println!("Shutting down worker #{}", worker.id);
+      println!("Shutting down worker:\n{}", worker);
 
       if let Some(handle) = worker.job.take() {
         handle.join().unwrap();

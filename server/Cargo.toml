@@ -6,3 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+mirai-annotations = { path = "/Users/chenhaobin/MIRAI/annotations" }
+contracts = {version = "0.6.2", features = ["mirai_assertions"]}
+
+# TO USE MIRAI, please first do the following:
+# $ rustup override set nightly-2022-05-18
