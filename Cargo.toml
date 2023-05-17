@@ -1,0 +1,16 @@
+[workspace]
+members = [
+  "Advanced",
+  "Collections",
+  "creusot-playground",
+  "DataStructures",
+  "ErrorHandling",
+  "FFI",
+  "grep",
+  "learn_proc_macro",
+  "PackageManager",
+  "SmartPointers",
+  "Trait",
+  "Typestate",
+]
+exclude = ["Tests"]

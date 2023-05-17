@@ -1,12 +1,9 @@
 [package]
-name = "creusot-playground"
+name = "learn_proc_macro"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-creusot-contracts = { git = "https://github.com/xldenis/creusot.git" }
-
-[features]
-contracts = [ "creusot-contracts/contracts" ]
+my_proc_macros = { path = "./proc_macro" }
